@@ -144,3 +144,131 @@ networks:
       config:
         - subnet: 172.28.0.0/16
           gateway: 172.28.0.1
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # FORGE - Secure image burning & encryption
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-forge:
+    build:
+      context: ./containers/forge
+      dockerfile: Dockerfile
+    container_name: n01d-forge
+    hostname: forge
+    stdin_open: true
+    tty: true
+    privileged: true
+    volumes:
+      - ./data:/data
+      - /dev:/dev:ro
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.14
+    environment:
+      - TERM=xterm-256color
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # MACHINE - VM Manager with sandboxing
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-machine:
+    build:
+      context: ./containers/machine
+      dockerfile: Dockerfile
+    container_name: n01d-machine
+    hostname: machine
+    stdin_open: true
+    tty: true
+    privileged: true
+    volumes:
+      - ./data:/data
+      - ./vms:/vms
+      - /dev/kvm:/dev/kvm
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.15
+    environment:
+      - TERM=xterm-256color
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # OSINT - NullSec OSINT & recon tools
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-osint:
+    build:
+      context: ./containers/osint
+      dockerfile: Dockerfile
+    container_name: n01d-osint
+    hostname: osint
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./data:/data
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.16
+    environment:
+      - TERM=xterm-256color
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # MOBILE - NullKia mobile security testing
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-mobile:
+    build:
+      context: ./containers/mobile
+      dockerfile: Dockerfile
+    container_name: n01d-mobile
+    hostname: mobile
+    stdin_open: true
+    tty: true
+    privileged: true
+    volumes:
+      - ./data:/data
+      - /dev/bus/usb:/dev/bus/usb
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.17
+    environment:
+      - TERM=xterm-256color
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # AUTOMOTIVE - BlackFlag ECU testing
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-automotive:
+    build:
+      context: ./containers/automotive
+      dockerfile: Dockerfile
+    container_name: n01d-automotive
+    hostname: automotive
+    stdin_open: true
+    tty: true
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./data:/data
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.18
+    environment:
+      - TERM=xterm-256color
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # STEALTH - Ghost network stealth & spoofing
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-stealth:
+    build:
+      context: ./containers/stealth
+      dockerfile: Dockerfile
+    container_name: n01d-stealth
+    hostname: stealth
+    stdin_open: true
+    tty: true
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./data:/data
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.19
+    environment:
+      - TERM=xterm-256color
