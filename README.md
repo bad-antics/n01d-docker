@@ -69,6 +69,60 @@ docker exec -it n01d-pentest /bin/bash
 
 ---
 
+## ⚡ Quick Launch
+
+Copy-paste to instantly launch any container:
+
+```bash
+# 🔴 Pentest - Kali penetration testing
+docker compose up -d n01d-pentest && docker exec -it n01d-pentest bash
+
+# 🚩 CTF - Capture the flag tools
+docker compose up -d n01d-ctf && docker exec -it n01d-ctf bash
+
+# 🔍 OSINT - Reconnaissance & intel
+docker compose up -d n01d-osint && docker exec -it n01d-osint bash
+
+# 👻 Stealth - Network anonymization
+docker compose up -d n01d-stealth && docker exec -it n01d-stealth sh
+
+# 📱 Mobile - NullKia mobile security
+docker compose up -d n01d-mobile && docker exec -it n01d-mobile bash
+
+# 🚗 Automotive - BlackFlag ECU testing
+docker compose up -d n01d-automotive && docker exec -it n01d-automotive bash
+
+# 🔥 Forge - Secure image burning
+docker compose up -d n01d-forge && docker exec -it n01d-forge bash
+
+# 🖥️ Machine - VM management
+docker compose up -d n01d-machine && docker exec -it n01d-machine bash
+
+# 💻 Dev - Development environment
+docker compose up -d n01d-dev && docker exec -it n01d-dev bash
+
+# 📊 Julia - Data science
+docker compose up -d n01d-julia && docker exec -it n01d-julia bash
+
+# 🌐 Proxy - Traffic interception
+docker compose up -d n01d-proxy && docker exec -it n01d-proxy bash
+
+# 🔒 VPN - VPN gateway
+docker compose up -d n01d-vpn && docker exec -it n01d-vpn bash
+```
+
+**Launch all:**
+```bash
+docker compose up -d
+```
+
+**Stop all:**
+```bash
+docker compose down
+```
+
+---
+
 ## 📦 Container Details
 
 ### 🔴 Pentest
