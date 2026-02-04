@@ -1,0 +1,6 @@
+.env
+data/
+config/wireguard/
+config/mitmproxy/
+*.log
+.DS_Store

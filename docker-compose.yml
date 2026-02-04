@@ -1,0 +1,146 @@
+#╔════════════════════════════════════════════════════════════════════════════════╗
+#║                           N01D DOCKER STACK                                    ║
+#║              Custom Security & Development Environment | bad-antics           ║
+#╚════════════════════════════════════════════════════════════════════════════════╝
+
+name: n01d
+
+services:
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PENTEST - Kali-based security testing
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-pentest:
+    build:
+      context: ./containers/pentest
+      dockerfile: Dockerfile
+    container_name: n01d-pentest
+    hostname: pentest
+    stdin_open: true
+    tty: true
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+    volumes:
+      - ./data:/data
+      - ./config:/config
+      - /dev/net/tun:/dev/net/tun
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.10
+    environment:
+      - TERM=xterm-256color
+      - N01D_MODE=pentest
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # DEV - Multi-language development environment
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-dev:
+    build:
+      context: ./containers/dev
+      dockerfile: Dockerfile
+    container_name: n01d-dev
+    hostname: dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./data:/data
+      - ./config:/config
+      - ${HOME}/.gitconfig:/home/n01d/.gitconfig:ro
+      - ${HOME}/.ssh:/home/n01d/.ssh:ro
+    ports:
+      - "3000:3000"
+      - "8000:8000"
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.11
+    environment:
+      - TERM=xterm-256color
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # JULIA - Julia security research
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-julia:
+    build:
+      context: ./containers/julia
+      dockerfile: Dockerfile
+    container_name: n01d-julia
+    hostname: julia
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./data:/data
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.12
+    environment:
+      - JULIA_NUM_THREADS=auto
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # CTF - Lightweight CTF environment
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-ctf:
+    build:
+      context: ./containers/ctf
+      dockerfile: Dockerfile
+    container_name: n01d-ctf
+    hostname: ctf
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./data:/data
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.13
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PROXY - mitmproxy for traffic interception
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-proxy:
+    build:
+      context: ./containers/proxy
+      dockerfile: Dockerfile
+    container_name: n01d-proxy
+    hostname: proxy
+    ports:
+      - "${PROXY_PORT:-8080}:8080"
+      - "${PROXY_WEB_PORT:-8081}:8081"
+    volumes:
+      - ./config/mitmproxy:/home/mitmproxy/.mitmproxy
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.20
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # VPN - WireGuard VPN
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-vpn:
+    build:
+      context: ./containers/vpn
+      dockerfile: Dockerfile
+    container_name: n01d-vpn
+    hostname: vpn
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    ports:
+      - "${WG_PORT:-51820}:51820/udp"
+    volumes:
+      - ./config/wireguard:/etc/wireguard
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.30
+
+# ═════════════════════════════════════════════════════════════════════════════════
+# NETWORKS
+# ═════════════════════════════════════════════════════════════════════════════════
+networks:
+  n01d-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+          gateway: 172.28.0.1
