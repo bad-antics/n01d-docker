@@ -272,3 +272,31 @@ networks:
         ipv4_address: 172.28.0.19
     environment:
       - TERM=xterm-256color
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PORTAL - Unified Container Dashboard
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-portal:
+    build:
+      context: ./containers/portal
+      dockerfile: Dockerfile
+    container_name: n01d-portal
+    hostname: portal
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.2
+    environment:
+      - TERM=xterm-256color
+      - SECRET_KEY=n01d-portal-${RANDOM}
+
+networks:
+  n01d-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
