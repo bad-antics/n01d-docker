@@ -1,273 +1,258 @@
-<div align="center">
+# N01D Docker
 
 ```
-███╗   ██╗ ██████╗  ██╗██████╗     ██████╗  ██████╗  ██████╗██╗  ██╗███████╗██████╗ 
-████╗  ██║██╔═══██╗███║██╔══██╗    ██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
-██╔██╗ ██║██║   ██║╚██║██║  ██║    ██║  ██║██║   ██║██║     █████╔╝ █████╗  ██████╔╝
-██║╚██╗██║██║   ██║ ██║██║  ██║    ██║  ██║██║   ██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
-██║ ╚████║╚██████╔╝ ██║██████╔╝    ██████╔╝╚██████╔╝╚██████╗██║  ██╗███████╗██║  ██║
-╚═╝  ╚═══╝ ╚═════╝  ╚═╝╚═════╝     ╚═════╝  ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-                    [ SECURITY & DEV CONTAINERS | bad-antics ]
+ ███╗   ██╗ ██████╗  ██╗██████╗     ██████╗  ██████╗  ██████╗██╗  ██╗███████╗██████╗ 
+ ████╗  ██║██╔═══██╗███║██╔══██╗    ██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+ ██╔██╗ ██║██║   ██║╚██║██║  ██║    ██║  ██║██║   ██║██║     █████╔╝ █████╗  ██████╔╝
+ ██║╚██╗██║██║   ██║ ██║██║  ██║    ██║  ██║██║   ██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+ ██║ ╚████║╚██████╔╝ ██║██████╔╝    ██████╔╝╚██████╔╝╚██████╗██║  ██╗███████╗██║  ██║
+ ╚═╝  ╚═══╝ ╚═════╝  ╚═╝╚═════╝     ╚═════╝  ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+                    [ PENTEST & DEV CONTAINERS | bad-antics ]
+                              v2.0 — AI · Music · Art
 ```
 
-[![GitHub](https://img.shields.io/badge/GitHub-bad--antics-181717?style=for-the-badge&logo=github)](https://github.com/bad-antics)
-[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
-[![Containers](https://img.shields.io/badge/Containers-12-00D26A?style=for-the-badge)](containers/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-
-**Pre-configured Docker containers for security research & development**
-
-</div>
+Pre-configured Docker containers for security research, AI/ML, image generation, music creation, and development.
 
 ---
 
-## 🐳 Containers
+## Containers
 
-### Core Security
-| Container | Description | Tools |
-|-----------|-------------|-------|
-| 🔴 **pentest** | Penetration testing | nmap, metasploit, burp, sqlmap, nikto |
-| 🚩 **ctf** | CTF challenges | pwntools, gdb, radare2, ghidra, z3 |
-| 🌐 **proxy** | Traffic interception | mitmproxy, burpsuite |
-| 🔒 **vpn** | VPN gateway | OpenVPN, WireGuard |
+### AI / LLM Services
 
-### Specialized Security
-| Container | Description | Tools |
-|-----------|-------------|-------|
-| 🔍 **osint** | OSINT & reconnaissance | shodan, theHarvester, sherlock, maigret |
-| 👻 **stealth** | Network stealth | nullsec-ghost, macchanger, tor, proxychains |
-| 📱 **mobile** | Mobile security (NullKia) | frida, objection, apktool, jadx |
-| 🚗 **automotive** | Automotive (BlackFlag) | can-utils, python-can, udsoncan |
+- **ollama** (port 11434) — Local LLM engine, runs all text models
+- **webui / Open WebUI** (port 3080) — ChatGPT-style web interface for all models
+- **agent-zero** (port 3100) — Autonomous AI agent with tool use + code execution
 
-### Development & Tools
-| Container | Description | Tools |
-|-----------|-------------|-------|
-| 💻 **dev** | Development environment | Python, Node, Go, Rust |
-| �� **julia** | Julia data science | Julia, Pluto, security packages |
-| 🔥 **forge** | Secure image burning | cryptsetup, ddrescue, n01d-forge |
-| 🖥️ **machine** | VM management | qemu, libvirt, tor, n01d-machine |
+### Creative / Generative
+
+- **comfyui** (port 8188) — Image/logo/art generation (Stable Diffusion, SDXL, Flux)
+- **musicgen** (port 7860) — AI music generation (Meta AudioCraft)
+
+### Security / Pentest
+
+- **pentest** — Kali Linux with nmap, metasploit, burp, sqlmap
+- **ctf** — CTF tools with pwntools, gdb, radare2, ghidra
+- **proxy** (port 8080/8081) — mitmproxy traffic interception
+- **vpn** (port 51820/udp) — WireGuard VPN gateway
+
+### Development
+
+- **dev** (port 3000/8000) — Python, Node, Go, Rust dev environment
+- **julia** — Julia data science + security research
 
 ---
 
-## 🚀 Quick Start
+## AI Models Included
+
+After starting Ollama, run the model pull script to download everything:
 
 ```bash
-# Clone the repo
-git clone https://github.com/bad-antics/n01d-docker.git
+docker exec n01d-ollama bash /scripts/pull-models.sh
+```
+
+### Uncensored / Fully Unlocked
+
+- **dolphin-mistral:7b** (4.1 GB) — Eric Hartford's Dolphin, no alignment filters
+- **dolphin-llama3:8b** (4.7 GB) — Dolphin Llama 3, fully unlocked
+- **dolphin-mixtral:8x7b** (26 GB) — Most capable uncensored MoE model
+- **wizard-vicuna-uncensored:13b** (7.4 GB) — Classic uncensored model
+- **llama2-uncensored:7b** (3.8 GB) — No guardrails Llama 2
+- **nous-hermes2:10.7b** (6.1 GB) — Powerful uncensored reasoning
+
+### Pentesting / Security
+
+- **codellama:13b** (7.4 GB) — Exploit dev, shellcode, reverse engineering
+- **deepseek-coder-v2:16b** (8.9 GB) — Advanced code/vuln analysis
+- **phind-codellama:34b** (19 GB) — Complex exploit generation
+
+### Reasoning
+
+- **deepseek-r1:8b** (4.9 GB) — Chain-of-thought reasoning
+- **deepseek-r1:14b** (9.0 GB) — Deep reasoning
+- **qwen2.5:7b** (4.7 GB) — Strong multilingual reasoning
+- **command-r:35b** (20 GB) — Advanced RAG + reasoning
+
+### Code Generation
+
+- **codellama:7b** (3.8 GB) — Fast code generation
+- **starcoder2:7b** (4.0 GB) — Multi-language code
+- **codegemma:7b** (5.0 GB) — Google's code model
+- **qwen2.5-coder:7b** (4.7 GB) — Qwen code specialist
+
+### Utility
+
+- **nomic-embed-text** (274 MB) — Embeddings for Agent Zero + RAG
+- **all-minilm** (45 MB) — Fast semantic search
+
+---
+
+## Quick Start
+
+```bash
 cd n01d-docker
 
-# Copy environment file
+# Copy environment config
 cp .env.example .env
 
 # Build all containers
 docker compose build
 
-# Start specific container
-docker compose up -d pentest
-docker exec -it n01d-pentest /bin/bash
-```
-
----
-
-## ⚡ Quick Launch
-
-Copy-paste to instantly launch any container:
-
-```bash
-# 🔴 Pentest - Kali penetration testing
-docker compose up -d n01d-pentest && docker exec -it n01d-pentest bash
-
-# 🚩 CTF - Capture the flag tools
-docker compose up -d n01d-ctf && docker exec -it n01d-ctf bash
-
-# 🔍 OSINT - Reconnaissance & intel
-docker compose up -d n01d-osint && docker exec -it n01d-osint bash
-
-# 👻 Stealth - Network anonymization
-docker compose up -d n01d-stealth && docker exec -it n01d-stealth sh
-
-# 📱 Mobile - NullKia mobile security
-docker compose up -d n01d-mobile && docker exec -it n01d-mobile bash
-
-# 🚗 Automotive - BlackFlag ECU testing
-docker compose up -d n01d-automotive && docker exec -it n01d-automotive bash
-
-# 🔥 Forge - Secure image burning
-docker compose up -d n01d-forge && docker exec -it n01d-forge bash
-
-# 🖥️ Machine - VM management
-docker compose up -d n01d-machine && docker exec -it n01d-machine bash
-
-# 💻 Dev - Development environment
-docker compose up -d n01d-dev && docker exec -it n01d-dev bash
-
-# 📊 Julia - Data science
-docker compose up -d n01d-julia && docker exec -it n01d-julia bash
-
-# 🌐 Proxy - Traffic interception
-docker compose up -d n01d-proxy && docker exec -it n01d-proxy bash
-
-# 🔒 VPN - VPN gateway
-docker compose up -d n01d-vpn && docker exec -it n01d-vpn bash
-```
-
-**Launch all:**
-```bash
+# Start everything (or pick what you need)
 docker compose up -d
+
+# Pull all AI models (takes a while on first run)
+docker exec n01d-ollama bash /scripts/pull-models.sh
+
+# Open your browser
+#   Open WebUI  -> http://localhost:3080
+#   ComfyUI     -> http://localhost:8188
+#   MusicGen    -> http://localhost:7860
+#   Agent Zero  -> http://localhost:3100
 ```
 
-**Stop all:**
+### Start Individual Service Groups
+
 ```bash
-docker compose down
-```
+# AI only
+docker compose up -d n01d-ollama n01d-webui n01d-agent-zero
 
----
+# Creative only
+docker compose up -d n01d-comfyui n01d-musicgen
 
-## 📦 Container Details
+# Pentest only
+docker compose up -d n01d-pentest n01d-proxy n01d-vpn
 
-### 🔴 Pentest
-Full Kali-based penetration testing environment.
-```bash
-docker compose up -d n01d-pentest
+# Shell into pentest container
 docker exec -it n01d-pentest /bin/bash
 ```
 
-### 🔍 OSINT
-Reconnaissance and open-source intelligence.
-```bash
-docker compose up -d n01d-osint
-docker exec -it n01d-osint /bin/bash
+---
 
-# Run tools
-theHarvester -d target.com -b all
-sherlock username
+## Accessing From Other Machines on Your Network
+
+Every service binds to `0.0.0.0` so it is accessible on your LAN.
+
+### Step 1 — Find Your Host Machine IP
+
+```powershell
+ipconfig | Select-String "IPv4"
+# Look for something like 192.168.1.100 or 10.0.0.50
 ```
 
-### 📱 Mobile (NullKia)
-Mobile application security testing.
-```bash
-docker compose up -d n01d-mobile
-docker exec -it n01d-mobile /bin/bash
+### Step 2 — Access Services from Any Device
 
-# Connect device and analyze
-adb devices
-frida-ps -U
-objection -g com.app.target explore
+Replace `HOST_IP` with the IP you found above. From any computer, phone, or tablet on the same network:
+
+- **Open WebUI** — `http://HOST_IP:3080` — Chat with any AI model
+- **Agent Zero** — `http://HOST_IP:3100` — Autonomous AI agent
+- **ComfyUI** — `http://HOST_IP:8188` — Generate images, logos, art
+- **MusicGen** — `http://HOST_IP:7860` — Generate music from text
+- **Ollama API** — `http://HOST_IP:11434` — Raw LLM API endpoint
+- **mitmproxy** — `http://HOST_IP:8081` — Web traffic inspection UI
+
+### Step 3 — Windows Firewall Rules (if needed)
+
+```powershell
+# Run as Administrator — opens all N01D ports
+$ports = @(3080, 3100, 7860, 8080, 8081, 8188, 11434, 51820)
+foreach ($port in $ports) {
+    New-NetFirewallRule -DisplayName "N01D Docker - Port $port" `
+        -Direction Inbound -Protocol TCP -LocalPort $port `
+        -Action Allow -Profile Private
+}
+# UDP for WireGuard
+New-NetFirewallRule -DisplayName "N01D Docker - WireGuard UDP" `
+    -Direction Inbound -Protocol UDP -LocalPort 51820 `
+    -Action Allow -Profile Private
+
+Write-Host "All N01D ports opened in Windows Firewall"
 ```
 
-### 🚗 Automotive (BlackFlag)
-CAN bus and ECU security testing.
-```bash
-docker compose up -d n01d-automotive
-docker exec -it n01d-automotive /bin/bash
+### Step 4 — Using Ollama from Remote Apps
 
-# Setup virtual CAN
-ip link add dev vcan0 type vcan
-ip link set up vcan0
+Any app that supports Ollama (like other Open WebUI instances, Continue.dev, etc.) can point to your server:
 
-# Analyze traffic
-candump vcan0
-cansend vcan0 123#DEADBEEF
 ```
-
-### 👻 Stealth
-Network anonymization and spoofing.
-```bash
-docker compose up -d n01d-stealth
-docker exec -it n01d-stealth /bin/bash
-
-# MAC spoofing
-macchanger -r eth0
-
-# Route through Tor
-proxychains4 curl ifconfig.me
-```
-
-### 🔥 Forge
-Secure disk imaging with encryption.
-```bash
-docker compose up -d n01d-forge
-docker exec -it n01d-forge /bin/bash
-
-# Create encrypted image
-cryptsetup luksFormat /dev/sdX
+Ollama URL: http://HOST_IP:11434
 ```
 
 ---
 
-## 🌐 Network
-
-All containers share a bridge network (`n01d-net`) with static IPs:
-
-| Container | IP Address |
-|-----------|------------|
-| pentest | 172.28.0.10 |
-| dev | 172.28.0.11 |
-| julia | 172.28.0.12 |
-| ctf | 172.28.0.13 |
-| forge | 172.28.0.14 |
-| machine | 172.28.0.15 |
-| osint | 172.28.0.16 |
-| mobile | 172.28.0.17 |
-| automotive | 172.28.0.18 |
-| stealth | 172.28.0.19 |
-| proxy | 172.28.0.20 |
-| vpn | 172.28.0.30 |
-
----
-
-## 📁 Structure
+## Structure
 
 ```
 n01d-docker/
-├── docker-compose.yml
-├── .env.example
-├── containers/
-│   ├── pentest/
-│   ├── dev/
-│   ├── julia/
-│   ├── ctf/
-│   ├── proxy/
-│   ├── vpn/
-│   ├── forge/
-│   ├── machine/
-│   ├── osint/
-│   ├── mobile/
-│   ├── automotive/
-│   └── stealth/
-├── data/           # Shared data volume
-├── config/         # Tool configurations
-└── vms/            # Virtual machine storage
+  docker-compose.yml          — All services defined here
+  .env.example                — Configuration template
+  scripts/
+    pull-models.sh            — Downloads all Ollama models
+  containers/
+    pentest/                  — Kali security tools
+    dev/                      — Multi-language dev env
+    julia/                    — Julia data science
+    ctf/                      — CTF challenge tools
+    proxy/                    — mitmproxy
+    vpn/                      — WireGuard
+    agent-zero/               — Autonomous AI agent
+    musicgen/                 — AI music generation
+  config/
+    mitmproxy/
+    wireguard/
+  data/                       — Persistent data
+    ollama/                   — Downloaded models
+    open-webui/               — Chat history
+    agent-zero/               — Agent workdir
+    comfyui/                  — SD models + outputs
+    musicgen/                 — Generated music
 ```
 
 ---
 
-## 🔧 Environment Variables
+## Configuration
+
+Copy `.env.example` to `.env` and customize ports, models, etc. Each container has its own Dockerfile in `containers/`. All persistent data lives in `data/`.
+
+### GPU Support
+
+If you have an NVIDIA GPU with enough VRAM, uncomment the `deploy` sections in `docker-compose.yml` for:
+
+- **Ollama** — runs LLMs on GPU (much faster inference)
+- **ComfyUI** — runs Stable Diffusion on GPU (required for decent speed)
+- **MusicGen** — runs AudioCraft on GPU (faster generation)
+
+You will also need NVIDIA Container Toolkit installed: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+
+---
+
+## Useful Commands
 
 ```bash
-# .env
-PROXY_PORT=8080
-PROXY_WEB_PORT=8081
-WG_PORT=51820
+# Check what is running
+docker compose ps
+
+# View logs
+docker compose logs -f n01d-ollama
+docker compose logs -f n01d-webui
+
+# List downloaded models
+docker exec n01d-ollama ollama list
+
+# Quick-test a model
+docker exec -it n01d-ollama ollama run dolphin-mistral:7b
+
+# Pull a single model
+docker exec n01d-ollama ollama pull deepseek-r1:14b
+
+# Stop everything
+docker compose down
+
+# Stop + remove volumes (clean slate)
+docker compose down -v
 ```
 
 ---
 
-## 🛠️ Related Projects
+GitHub: https://github.com/bad-antics
+NullSec: https://github.com/bad-antics/nullsec
 
-| Project | Description |
-|---------|-------------|
-| [n01d-forge](https://github.com/bad-antics/n01d-forge) | Secure image burner |
-| [n01d-machine](https://github.com/bad-antics/n01d-machine) | VM manager |
-| [nullkia](https://github.com/bad-antics/nullkia) | Mobile security framework |
-| [blackflag-ecu](https://github.com/bad-antics/blackflag-ecu) | Automotive testing |
-| [nullsec-ghost](https://github.com/bad-antics/nullsec-ghost) | Network stealth |
-| [nullsec-linux](https://github.com/bad-antics/nullsec-linux) | Security distro |
-
----
-
-<div align="center">
-
-**[bad-antics](https://github.com/bad-antics)** • For authorized security testing only
-
-</div>
+Made by bad-antics — https://github.com/bad-antics

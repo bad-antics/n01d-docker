@@ -1,11 +1,217 @@
 #╔════════════════════════════════════════════════════════════════════════════════╗
-#║                           N01D DOCKER STACK                                    ║
-#║              Custom Security & Development Environment | bad-antics           ║
+#║                           N01D DOCKER STACK v2.0                               ║
+#║    Security · AI/ML · Image Gen · Music Gen · Agent Zero | bad-antics        ║
 #╚════════════════════════════════════════════════════════════════════════════════╝
+#
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │  NETWORK ACCESS CHEAT SHEET (from any machine on your LAN)                 │
+# │                                                                             │
+# │  Replace <HOST_IP> with this machine's LAN IP (run: ipconfig)              │
+# │                                                                             │
+# │  Open WebUI (chat)      → http://<HOST_IP>:3080                            │
+# │  Ollama API             → http://<HOST_IP>:11434                           │
+# │  Agent Zero             → http://<HOST_IP>:3100                            │
+# │  ComfyUI (images)       → http://<HOST_IP>:8188                            │
+# │  MusicGen (music)       → http://<HOST_IP>:7860                            │
+#  mitmproxy proxy        → http://<HOST_IP>:9090                            │
+# │  mitmproxy web          → http://<HOST_IP>:8081                            │
+# │  Dev ports              → http://<HOST_IP>:3000 / :8000                    │
+# └─────────────────────────────────────────────────────────────────────────────┘
 
 name: n01d
 
 services:
+
+  # ╔═══════════════════════════════════════════════════════════════════════════╗
+  # ║                        🧠 AI / LLM SERVICES                             ║
+  # ╚═══════════════════════════════════════════════════════════════════════════╝
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # OLLAMA - Local LLM Engine (serves ALL text models)
+  # After startup run:  docker exec n01d-ollama /scripts/pull-models.sh
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-ollama:
+    image: ollama/ollama:latest
+    container_name: n01d-ollama
+    hostname: ollama
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ./data/ollama:/root/.ollama
+      - ./scripts:/scripts:ro
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+      - OLLAMA_KEEP_ALIVE=24h
+      # Uncomment if you upgrade GPU (GTX 980 = limited VRAM):
+      # - NVIDIA_VISIBLE_DEVICES=all
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.50
+    # Uncomment for GPU passthrough:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # OPEN WEBUI - ChatGPT-style frontend for ALL Ollama models
+  # Access: http://<HOST_IP>:3080
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: n01d-webui
+    hostname: webui
+    restart: unless-stopped
+    ports:
+      - "${WEBUI_PORT:-3080}:8080"
+    volumes:
+      - ./data/open-webui:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://n01d-ollama:11434
+      - WEBUI_AUTH=${WEBUI_AUTH:-false}
+      - WEBUI_NAME=N01D AI Lab
+      - DEFAULT_MODELS=dolphin-mistral:7b
+      - ENABLE_RAG_WEB_SEARCH=true
+      - ENABLE_IMAGE_GENERATION=true
+      - COMFYUI_BASE_URL=http://n01d-comfyui:8188
+    depends_on:
+      - n01d-ollama
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.51
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # AGENT ZERO - Autonomous AI Agent Framework
+  # Fully autonomous agent with tool use, code execution, web browsing
+  # Access: http://<HOST_IP>:3100
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-agent-zero:
+    image: frdel/agent-zero-run:latest
+    container_name: n01d-agent-zero
+    hostname: agent-zero
+    restart: unless-stopped
+    ports:
+      - "${AGENT_ZERO_PORT:-3100}:80"
+    volumes:
+      - ./data/agent-zero:/app/work_dir
+    environment:
+      - OLLAMA_BASE_URL=http://n01d-ollama:11434
+      - CHAT_MODEL=${AGENT_ZERO_MODEL:-dolphin-mistral:7b}
+      - UTILITY_MODEL=${AGENT_ZERO_UTIL_MODEL:-dolphin-mistral:7b}
+      - EMBEDDING_MODEL=${AGENT_ZERO_EMBED_MODEL:-nomic-embed-text:latest}
+    depends_on:
+      - n01d-ollama
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.52
+
+  # ╔═══════════════════════════════════════════════════════════════════════════╗
+  # ║                    🎨 CREATIVE / GENERATIVE SERVICES                     ║
+  # ╚═══════════════════════════════════════════════════════════════════════════╝
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # COMFYUI - Image / Logo / Art Generation (Stable Diffusion)
+  # Node-based workflow UI for SD, SDXL, Flux, etc.
+  # Access: http://<HOST_IP>:8188
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-comfyui:
+    image: yanwk/comfyui-boot:cpu
+    container_name: n01d-comfyui
+    hostname: comfyui
+    restart: unless-stopped
+    ports:
+      - "${COMFYUI_PORT:-8188}:8188"
+    volumes:
+      - ./data/comfyui/storage:/root
+      - ./data/comfyui/models:/root/ComfyUI/models
+      - ./data/comfyui/output:/root/ComfyUI/output
+    environment:
+      - CLI_ARGS=--listen 0.0.0.0 --preview-method auto --cpu
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.60
+    # Uncomment for GPU (highly recommended for image gen):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # MUSICGEN - AI Music Generation (Meta's MusicGen via Audiocraft)
+  # Text-to-music, melody conditioning, full tracks
+  # Access: http://<HOST_IP>:7860
+  # ═══════════════════════════════════════════════════════════════════════════════
+  n01d-musicgen:
+    image: python:3.10-bookworm
+    container_name: n01d-musicgen
+    hostname: musicgen
+    restart: unless-stopped
+    ports:
+      - "${MUSICGEN_PORT:-7860}:7860"
+    volumes:
+      - ./data/musicgen/output:/app/output
+      - ./data/musicgen/cache:/root/.cache
+      - ./containers/musicgen/app.py:/app/app.py:ro
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - GRADIO_SERVER_PORT=7860
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        pip install --upgrade pip
+        pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+        pip install av==14.0.1
+        pip install --no-deps audiocraft
+        pip install gradio scipy soundfile demucs encodec flashy lameenc num2words spacy transformers huggingface_hub safetensors sentencepiece protobuf einops librosa hydra-core hydra_colorlog torchmetrics
+
+        # Create a stub xformers module so audiocraft imports don't crash on CPU
+        mkdir -p /usr/local/lib/python3.10/site-packages/xformers/ops/fmha
+        cat > /usr/local/lib/python3.10/site-packages/xformers/__init__.py << 'STUB'
+        # Stub xformers for CPU-only mode
+        STUB
+        cat > /usr/local/lib/python3.10/site-packages/xformers/ops/__init__.py << 'STUB'
+        # Stub - audiocraft imports xformers.ops
+        class MemoryEfficientAttentionFlashAttentionOp:
+            pass
+        class MemoryEfficientAttentionCutlassOp:
+            pass
+        class MemoryEfficientAttentionOp:
+            pass
+        def memory_efficient_attention(*args, **kwargs):
+            raise NotImplementedError("xformers not available in CPU mode")
+        def fmha(*args, **kwargs):
+            raise NotImplementedError("xformers not available in CPU mode")
+        STUB
+        cat > /usr/local/lib/python3.10/site-packages/xformers/ops/fmha/__init__.py << 'STUB'
+        # Stub
+        STUB
+
+        cd /app && python app.py
+    networks:
+      n01d-net:
+        ipv4_address: 172.28.0.61
+    # Uncomment for GPU (recommended for faster generation):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # ╔═══════════════════════════════════════════════════════════════════════════╗
+  # ║                      🔴 SECURITY / PENTEST SERVICES                      ║
+  # ╚═══════════════════════════════════════════════════════════════════════════╝
+
   # ═══════════════════════════════════════════════════════════════════════════════
   # PENTEST - Kali-based security testing
   # ═══════════════════════════════════════════════════════════════════════════════
@@ -25,13 +231,13 @@ services:
     volumes:
       - ./data:/data
       - ./config:/config
-      - /dev/net/tun:/dev/net/tun
     networks:
       n01d-net:
         ipv4_address: 172.28.0.10
     environment:
       - TERM=xterm-256color
       - N01D_MODE=pentest
+      - OLLAMA_BASE_URL=http://n01d-ollama:11434
 
   # ═══════════════════════════════════════════════════════════════════════════════
   # DEV - Multi-language development environment
@@ -47,8 +253,6 @@ services:
     volumes:
       - ./data:/data
       - ./config:/config
-      - ${HOME}/.gitconfig:/home/n01d/.gitconfig:ro
-      - ${HOME}/.ssh:/home/n01d/.ssh:ro
     ports:
       - "3000:3000"
       - "8000:8000"
@@ -104,7 +308,7 @@ services:
     container_name: n01d-proxy
     hostname: proxy
     ports:
-      - "${PROXY_PORT:-8080}:8080"
+      - "${PROXY_PORT:-9090}:8080"
       - "${PROXY_WEB_PORT:-8081}:8081"
     volumes:
       - ./config/mitmproxy:/home/mitmproxy/.mitmproxy
